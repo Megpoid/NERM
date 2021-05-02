@@ -1,4 +1,4 @@
-import React, { Conponent, useState } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { showErrorMessage, showSuccessMessage } from '../../helpers/message'
@@ -10,13 +10,13 @@ import equals from 'validator/lib/equals';
 import { SignUpInstance } from '../../api/auth';
 
 const SignUp = () => {
-    const[formData, setFormData] = useState({ username: '', email: '', password: '', confirm_password: '', successMessage: false, errorMessage: false, isLoading: false })
+    const[formData, setFormData] = useState({ username: 'kaka', email: 'admin@admin.com', password: 'kaka619', confirm_password: 'kaka619', successMessage: false, errorMessage: false, isLoading: false })
     // Defining the State
     const { username, email, password, confirm_password, successMessage, errorMessage, isLoading } = formData
     // HandleChange
     const handleChange = (evt) => { setFormData({ ...formData, [evt.target.name]: evt.target.value, successMessage: '', errorMessage: '' }) }
     // HandleSubmit
-    const handleSubmit = (evt) => { 
+    const handleSubmit = async (evt) => { 
         evt.preventDefault();
         if(isEmpty(username) || isEmpty(email) || isEmpty(password) || isEmpty(confirm_password)) {
             setFormData({ ...formData, errorMessage: 'All fields is required.' })
@@ -28,17 +28,16 @@ const SignUp = () => {
             const { username, email, password } = formData
             const data = { username, email, password }
             setFormData({ ...formData, isLoading: true })
-            SignUpInstance(data).then((response) => {
-                console.log(response)
+            await SignUpInstance(data).then(response => {
                 setFormData({
                     username: '',
                     email: '',
                     password: '',
                     confirm_password: '',
                     isLoading: false,
-                    successMessage: response.data.successMessage
+                    successMessage: response.data.message
                 })
-            }).catch((err) => {
+            }).catch(err => {
                 setFormData({ ...formData, isLoading: false, errorMessage: err.response.data.errorMessage })
             })
         }

@@ -6,5 +6,5 @@ export const SignUpInstance = async (data) => {
     }
     const response = await axios.post('http://localhost:5000/api/auth/signup', data, config)
 
-    return response;
+    return (response);
 }
