@@ -25,3 +25,11 @@ exports.signupController = async (req, res) => {
 		})
 	}
 };
+
+exports.signinController = async (req, res) => {
+	const { email, password } = req.body
+	console.log('Inside Controller is ' + JSON.stringify(req.body))
+	return res.status(201).json({
+		message: "Login Success, Please Login."
+	})
+};

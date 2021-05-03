@@ -40,12 +40,8 @@ const SignUp = () => {
             setFormData({ ...formData, isLoading: true })
             await SignUpInstance(data).then(response => {
                 setFormData({
-                    username: '',
-                    email: '',
-                    password: '',
-                    confirm_password: '',
-                    isLoading: false,
-                    successMessage: response.data.message
+                    username: '', email: '', password: '', confirm_password: '',
+                    isLoading: false, successMessage: response.data.message
                 })
             }).catch(err => {
                 setFormData({ ...formData, isLoading: false, errorMessage: err.response.data.errorMessage })

@@ -36,6 +36,7 @@ const SignIn = () => {
             const data = { email, password }
             setFormData({ ...formData, isLoading: true})
             await SignInInstance(data).then(response => {
+                console.log(response)
                 setFormData({
                     email: '',
                     password: '',
