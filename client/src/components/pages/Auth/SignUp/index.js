@@ -44,6 +44,7 @@ const SignUp = () => {
                     isLoading: false, successMessage: response.data.message
                 })
             }).catch(err => {
+                console.log(err)
                 setFormData({ ...formData, isLoading: false, errorMessage: err.response.data.errorMessage })
             })
         }

@@ -1,5 +1,7 @@
 const User = require('../models/User');
-const bcrypt = require('bcryptjs')
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const { jwtSecret, jwtExpire } = require('../config/keys')
 
 exports.signupController = async (req, res) => {
 	const { username, email, password } = req.body
@@ -21,15 +23,34 @@ exports.signupController = async (req, res) => {
         })
 	} catch (err) {
 		return res.status(500).json({
-			errorMessage: 'Something `em wrong'
+			errorMessage: 'Something `em wrong on the server.'
 		})
 	}
 };
 
 exports.signinController = async (req, res) => {
 	const { email, password } = req.body
-	console.log('Inside Controller is ' + JSON.stringify(req.body))
-	return res.status(201).json({
-		message: "Login Success, Please Login."
-	})
+	try {
+		const user = await User.findOne({ email })
+		if(!user) {
+			return res.status(400).json({ errorMessage: 'there are no email with such ' + email + ' ,Please Resgiter.' })
+		}
+		const isMatch = await bcrypt.compare(password, user.password)
+		if(!isMatch) {
+			return res.status(400).json({ errorMessage: 'Password is incorrect with the current.' })
+		}
+		const payload = { user: { _id: user._id } }
+		await jwt.sign(payload, jwtSecret, { expiresIn: jwtExpire }, (err, token) => {
+			if(err) console.error('jwt error: ', err)
+			const { _id, username, email, role } = user
+
+			return res.status(201).json({
+				token, user: { _id, username, email, role }
+			})
+		})
+	} catch (err) {
+		return res.status(500).json({
+			errorMessage: 'Something `em wrong on the server.'
+		})
+	}
 };
