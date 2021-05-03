@@ -1,20 +1,30 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { showErrorMessage, showSuccessMessage } from '../../helpers/message'
-import { showLoading } from '../../helpers/loader';
+import { showErrorMessage, showSuccessMessage } from '../../../helpers/message'
+import { showLoading } from '../../../helpers/loader';
 
 import isEmpty from 'validator/lib/isEmpty';
 import isEmail from 'validator/lib/isEmail';
 import equals from 'validator/lib/equals';
-import { SignUpInstance } from '../../api/auth';
+
+import { SignUpInstance } from '../../../api/auth';
 
 const SignUp = () => {
-    const[formData, setFormData] = useState({ username: 'kaka', email: 'admin@admin.com', password: 'kaka619', confirm_password: 'kaka619', successMessage: false, errorMessage: false, isLoading: false })
+    const[formData, setFormData] = useState({
+        username: '', email: '', password: '', confirm_password: '',
+        successMessage: false, errorMessage: false, isLoading: false
+    });
     // Defining the State
     const { username, email, password, confirm_password, successMessage, errorMessage, isLoading } = formData
     // HandleChange
-    const handleChange = (evt) => { setFormData({ ...formData, [evt.target.name]: evt.target.value, successMessage: '', errorMessage: '' }) }
+    const handleChange = (evt) => {
+        setFormData({
+            ...formData,
+            [evt.target.name]: evt.target.value,
+            successMessage: '', errorMessage: ''
+        })
+    }
     // HandleSubmit
     const handleSubmit = async (evt) => { 
         evt.preventDefault();
@@ -78,7 +88,7 @@ const SignUp = () => {
                 <div className="form-group">
                     <button type="submit" className="btn btn-primary btn-block btn-lg">Sign Up</button>
                 </div>
-                <p className="text-center text-white">Have a account? <Link to="/login">Login In</Link></p>
+                <p className="text-center text-white">Have a account? <Link to="/signin">Sign In</Link></p>
             </form>
         )
     };

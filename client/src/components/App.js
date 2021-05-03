@@ -3,10 +3,10 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
 import Header from './Header';
 
-import Home from './Home';
-import SignIn from './Auth/SignIn';
-import SignUp from './Auth/SignUp';
-import NotFound from './NotFound';
+import Home from './pages/Home';
+import SignIn from './pages/Auth/SignIn';
+import SignUp from './pages/Auth/SignUp';
+import NotFound from './pages/NotFound';
 
 class App extends Component {
 	render() {
