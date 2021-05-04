@@ -7,6 +7,8 @@ import { showLoading } from '../../../helpers/loader';
 import isEmpty from 'validator/lib/isEmpty';
 import isEmail from 'validator/lib/isEmail';
 import { SignInInstance } from '../../../api/auth';
+import { setAuthentication } from '../../../helpers/auth';
+
 
 const SignIn = () => {
 
@@ -36,13 +38,8 @@ const SignIn = () => {
             const data = { email, password }
             setFormData({ ...formData, isLoading: true})
             await SignInInstance(data).then(response => {
-                console.log(response)
-                setFormData({
-                    email: '',
-                    password: '',
-                    isLoading: false,
-                    isRedirectedToDashboard: true
-                })
+                setFormData({ isLoading: false, isRedirectedToDashboard: true })
+                setAuthentication(response.data.token, response.data.user)
             }).catch(err => {
                 setFormData({ ...formData, isLoading: false, errorMessage: err.response.data.errorMessage })
             })
