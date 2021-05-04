@@ -7,17 +7,17 @@ import { showLoading } from '../../../helpers/loader';
 import isEmpty from 'validator/lib/isEmpty';
 import isEmail from 'validator/lib/isEmail';
 import { SignInInstance } from '../../../api/auth';
-import { setAuthentication } from '../../../helpers/auth';
+import { isAuthenticated, setAuthentication } from '../../../helpers/auth';
 
 
 const SignIn = () => {
 
     const[formData, setFormData] = useState({ 
         email: '', password: '', 
-        errorMessage: false, isLoading: false, isRedirectedToDashboard: false
+        errorMessage: false, isLoading: false
     })
 
-    const { email, password, errorMessage, isLoading, isRedirectedToDashboard } = formData
+    const { email, password, errorMessage, isLoading } = formData
 
     const handleChange = (evt) => {
         setFormData({ 
@@ -38,8 +38,13 @@ const SignIn = () => {
             const data = { email, password }
             setFormData({ ...formData, isLoading: true})
             await SignInInstance(data).then(response => {
-                setFormData({ isLoading: false, isRedirectedToDashboard: true })
+                setFormData({ ...formData, isLoading: false })
                 setAuthentication(response.data.token, response.data.user)
+                if(isAuthenticated() && isAuthenticated.role === 1) {
+                    console.log('you`re admin, redirecting to admin dashboard')
+                } else {
+                    console.log('you`re just an ordinary user, redirecting to user dahsboard')
+                }
             }).catch(err => {
                 setFormData({ ...formData, isLoading: false, errorMessage: err.response.data.errorMessage })
             })
