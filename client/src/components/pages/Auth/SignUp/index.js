@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useHistory } from 'react-router-dom';
 
 import { showErrorMessage, showSuccessMessage } from '../../../helpers/message'
 import { showLoading } from '../../../helpers/loader';
@@ -8,9 +8,19 @@ import isEmpty from 'validator/lib/isEmpty';
 import isEmail from 'validator/lib/isEmail';
 import equals from 'validator/lib/equals';
 
+import { isAuthenticated } from '../../../helpers/auth';
+
 import { SignUpInstance } from '../../../api/auth';
 
 const SignUp = () => {
+    let history = useHistory();
+    useEffect(() => {
+        if(isAuthenticated() && isAuthenticated().role === 1) {
+            history.push('/admin/dashboard')
+        } else if(isAuthenticated() && isAuthenticated().role === 0) {
+            history.push('/user/dashboard')
+        }
+    }, [history])
     const[formData, setFormData] = useState({
         username: '', email: '', password: '', confirm_password: '',
         successMessage: false, errorMessage: false, isLoading: false
@@ -39,12 +49,13 @@ const SignUp = () => {
             const data = { username, email, password }
             setFormData({ ...formData, isLoading: true })
             await SignUpInstance(data).then(response => {
-                setFormData({
-                    username: '', email: '', password: '', confirm_password: '',
-                    isLoading: false, successMessage: response.data.message
-                })
+                setFormData({ isLoading: false, successMessage: response.data.message })
+                if(isAuthenticated() && isAuthenticated().role === 1) {
+                    history.push('/admin/dashboard')
+                } else if(isAuthenticated() && isAuthenticated().role === 0) {
+                    history.push('/user/dashboard')
+                }
             }).catch(err => {
-                console.log(err)
                 setFormData({ ...formData, isLoading: false, errorMessage: err.response.data.errorMessage })
             })
         }

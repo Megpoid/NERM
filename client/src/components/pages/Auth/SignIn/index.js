@@ -1,5 +1,5 @@
-import React, { useState} from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState} from 'react';
+import { Link, useHistory } from 'react-router-dom';
 
 import { showErrorMessage } from '../../../helpers/message'
 import { showLoading } from '../../../helpers/loader';
@@ -9,9 +9,15 @@ import isEmail from 'validator/lib/isEmail';
 import { SignInInstance } from '../../../api/auth';
 import { isAuthenticated, setAuthentication } from '../../../helpers/auth';
 
-
 const SignIn = () => {
-
+    let history = useHistory();
+    useEffect(() => {
+        if(isAuthenticated() && isAuthenticated().role === 1) {
+            history.push('/admin/dashboard')
+        } else if(isAuthenticated() && isAuthenticated().role === 0) {
+            history.push('/user/dashboard')
+        }
+    }, [history])
     const[formData, setFormData] = useState({ 
         email: '', password: '', 
         errorMessage: false, isLoading: false
@@ -40,10 +46,10 @@ const SignIn = () => {
             await SignInInstance(data).then(response => {
                 setFormData({ ...formData, isLoading: false })
                 setAuthentication(response.data.token, response.data.user)
-                if(isAuthenticated() && isAuthenticated.role === 1) {
-                    console.log('you`re admin, redirecting to admin dashboard')
-                } else {
-                    console.log('you`re just an ordinary user, redirecting to user dahsboard')
+                if(isAuthenticated() && isAuthenticated().role === 1) {
+                    history.push('/admin/dashboard')
+                } else if(isAuthenticated() && isAuthenticated().role === 0) {
+                    history.push('/user/dashboard')
                 }
             }).catch(err => {
                 setFormData({ ...formData, isLoading: false, errorMessage: err.response.data.errorMessage })
